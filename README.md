@@ -82,6 +82,7 @@ prompts a root shell on the drone
 skyjack> video
 
 sends a precompiled video or image to the AR FreeFlight App display
+(videos need to be in h264 including the header from parrot)
 ```
 ```
 skyjack> help
