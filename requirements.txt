@@ -1,0 +1,8 @@
+tabulate==0.7.5
+sapy==2.2.1
+ftputil==3.3.1
+wheel==0.24.0
+termcolor==1.1.0
+netifaces==0.10.4
+pygame==1.9.1release
+
