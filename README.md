@@ -109,6 +109,6 @@ If you want to add your own commands to the shell, check out commands/samplecomm
 
 Credits
 -------
-The dronepwn skyjack shell was made by students of the FH St. Poelten as a project PoC.
+The dronepwn skyjack shell was made by students as a project PoC.
 
 
